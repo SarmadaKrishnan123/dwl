@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:azure-storage="http://www.mulesoft.org/schema/mule/azure-storage" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/azure-storage http://www.mulesoft.org/schema/mule/azure-storage/current/mule-azure-storage.xsd">
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="2f06439d-52d3-4fd4-b661-41f0166a09f3" >
+		<http:listener-connection host="0.0.0.0" port="8083" />
+	</http:listener-config>
+	<flow name="mapObjectFlow" doc:id="881883ad-f6f8-48aa-a1b5-6795362c9198" >
+		<http:listener doc:name="Listener" doc:id="fb3fc094-5bf8-46f5-be09-41819d5f1389" config-ref="HTTP_Listener_config1" path="/path3"/>
+		<ee:transform doc:name="Transform Message" doc:id="4241b0b6-3639-49c3-bba4-e800398449fc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a={
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+}
+output application/json
+---
+a mapObject (value,key,index) -> { (index) : { (value):key} }
+	
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<azure-storage:upload-blob doc:name="Upload blob" doc:id="18aeb4cf-b2f7-4938-99b2-1f80604aa199" />
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="278c2929-6434-44a8-8894-2593bc664d90" />
+	</flow>
+</mule>

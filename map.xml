@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config3" doc:name="HTTP Listener config" doc:id="091a2ce5-cdc2-4540-8b23-fcf051aa0524" >
+		<http:listener-connection host="0.0.0.0" port="8084" />
+	</http:listener-config>
+	<flow name="dwlFlow" doc:id="44b4798a-0e47-4531-a41e-9f9ef9a4046f" >
+		<http:listener doc:name="Listener" doc:id="dc9339f5-b0d4-4112-80ad-433d91a20681" config-ref="HTTP_Listener_config3" path="/path2"/>
+		<ee:transform doc:name="calling dwl" doc:id="47b13cea-3e4b-4be9-a179-670f771b6359" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a=[{
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+},
+{
+	name:"Mule",
+	id: 456,
+	"org": "XYZ"
+},
+{
+	name:"Swag",
+	id: 789,
+	"org": "AWS"
+}]
+output application/json
+---
+a map{
+	"CandidateName": $.name,
+	"Company": $.org,
+	"Uniqye id": $.name++"-"++$.id++"-"++$.org,
+	"What is dollar dollar":$$
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="reduce" doc:id="3104cb22-79dc-47ae-86dc-63883b4f6eb2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a=[{
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+},
+{
+	name:"Mule",
+	id: 456,
+	"org": "XYZ"
+},
+{
+	name:"Swag",
+	id: 789,
+	"org": "AWS"
+}]
+output application/json
+---
+a reduce($ ++ $$)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="pluck" doc:id="c75dafb8-07f1-4064-a82e-dfc5b9de458e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a={
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+}
+output application/json
+---
+a pluck $$$]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="flatten" doc:id="4ed0c4e7-b8e3-4eba-b5cb-64f6ee382622" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a=[{
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+},
+{
+	name:"Mule",
+	id: 456,
+	"org": "XYZ"
+},
+{
+	name:"Swag",
+	id: 789,
+	"org": "AWS"
+}
+]
+var b=[
+	{
+		name:"BSravan",
+		id: 123,
+		"org": "Mulesoft"
+	},
+	{
+	name:"Mule",
+	id: 456,
+	"org": "XYZ"
+},
+{
+	name:"Swag",
+	id: 789,
+	"org": "AWS"
+}	
+]
+output application/json
+---
+flatten(a+b)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filter" doc:id="8cef9c10-6811-4d18-9386-efb2d31fce09" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+var a=[{
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+},
+{
+	name:"Mule",
+	id: 4567,
+	"org": "XYZ"
+},
+{
+	name:"Mule",
+	id: 789,
+	"org": "AWS"
+}]
+output application/json
+---
+ /**(a map{
+	name:$.name,
+	id:$.id})**/
+a filter $.id>200
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="groupBy" doc:id="7a48da23-6b2d-4f53-ab25-78606c25b5d3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+%dw 2.0
+var a=[{
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+},
+{
+	name:"Mule",
+	id: 4567,
+	"org": "XYZ"
+},
+{
+	name:"Mule",
+	id: 789,
+	"org": "AWS"
+}]
+output application/json
+---
+ /**(a map{
+	name:$.name,
+	id:$.id})**/
+a groupBy $.name]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="OrderBy" doc:id="cd1d9394-2879-4d8b-985a-8c32f5938105" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+%dw 2.0
+var a=[{
+	
+    	name: "Sravan",
+		id:123,
+		"org":"Mulesoft"
+},
+{
+	name:"Mule",
+	id: 4567,
+	"org": "XYZ"
+},
+{
+	name:"Mule",
+	id: 789,
+	"org": "AWS"
+}]
+output application/json
+---
+ /**(a map{
+	name:$.name,
+	id:$.id})**/
+a orderBy $.id]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

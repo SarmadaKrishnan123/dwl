@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config4" doc:name="HTTP Listener config" doc:id="858599e6-4de9-48ab-982c-40679d71264b" >
+		<http:listener-connection host="0.0.0.0" port="8086" />
+	</http:listener-config>
+	<flow name="lookupFlow" doc:id="a787a808-cf3b-4585-b9fc-fb02e3bd5b30" >
+		<http:listener doc:name="Listener" doc:id="d469856a-2fde-44c0-a43c-17742cb4e910" config-ref="HTTP_Listener_config4" path="/path5"/>
+		<set-payload value='#["Hello World"]' doc:name="Set Payload" doc:id="4c2a1148-dfd7-44ed-88bf-01c9a44a240a" />
+		<ee:transform doc:name="Transform Message" doc:id="6a4d0a02-bafa-4dca-9b00-6900fa578990" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: Mule::lookup("privateflow",payload,6000),
+	status: "Success"
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="privateflow" doc:id="65e72f87-f117-49d1-a996-c1f6478f675d" >
+		<ee:transform doc:name="Transform Message" doc:id="7d893fa5-9898-4642-9574-b6816b0726d4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"How are you?"
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
